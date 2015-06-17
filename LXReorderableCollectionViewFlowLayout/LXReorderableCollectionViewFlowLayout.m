@@ -169,6 +169,16 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     return (id<LXReorderableCollectionViewDelegateFlowLayout>)self.collectionView.delegate;
 }
 
+- (void)tearDownExistingGestureIfNeeded {
+    if (self.selectedItemIndexPath) {
+        [self.currentView removeFromSuperview];
+        if ([self.delegate respondsToSelector:@selector(collectionView:layout:didEndDraggingItemAtIndexPath:)]) {
+            [self.delegate collectionView:self.collectionView layout:self didEndDraggingItemAtIndexPath:self.selectedItemIndexPath];
+        }
+        self.selectedItemIndexPath = nil;
+    }
+}
+
 - (void)invalidateLayoutIfNecessary {
     NSIndexPath *newIndexPath = [self.collectionView indexPathForItemAtPoint:self.currentView.center];
     NSIndexPath *previousIndexPath = self.selectedItemIndexPath;
